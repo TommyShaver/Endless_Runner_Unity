@@ -15,7 +15,10 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 10;
     public float gravityModifier;
     public bool isOneGround = true;
+    public bool secondJump = false; 
     public bool gameOver;
+    public bool speedUp = false;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -29,14 +32,9 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space) && isOneGround && !gameOver)
-        {
-            playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isOneGround = false;
-            playerAnim.SetTrigger("Jump_trig");
-            dirtParticle.Stop();
-            playAudio.PlayOneShot(jumpSound, 1.0f);
-        }
+        JumpFunction();
+        SpeedUp();
+        
     }
 
     void OnCollisionEnter(Collision other)
@@ -44,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
         if(other.gameObject.CompareTag("Ground"))
         {
             isOneGround = true;
+            secondJump = false;
             Debug.Log("On Ground");
             dirtParticle.Play();
         } 
@@ -58,6 +57,43 @@ public class PlayerMovement : MonoBehaviour
             playAudio.PlayOneShot(crashSounds, 1.0f);
 
         }
+    }
+    void JumpFunction()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && isOneGround && !gameOver)
+        {
+            playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            isOneGround = false;
+            playerAnim.SetTrigger("Jump_trig");
+            dirtParticle.Stop();
+            playAudio.PlayOneShot(jumpSound, 1.0f);
+        }
+        else if (Input.GetKeyDown(KeyCode.Space) && !isOneGround && !secondJump)
+        {
+            playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            isOneGround = false;
+            playerAnim.SetTrigger("Jump_trig");
+            dirtParticle.Stop();
+            playAudio.PlayOneShot(jumpSound, 1.0f);
+            secondJump = true;
+        }
+    }
+    void SpeedUp()
+    {
+        if(Input.GetKeyDown(KeyCode.LeftShift) && gameOver == false)
+        {
+            playerAnim.SetFloat("Speed_Multiplier", 5.0f);
+            Debug.Log("That boy runing");
+            speedUp = true;
+        }
+        if(Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            playerAnim.SetFloat("Speed_Multiplier", 1.0f);
+            speedUp = false;
+            Debug.Log("That boy not runing");
+        }
+       
+               
     }
    
 }

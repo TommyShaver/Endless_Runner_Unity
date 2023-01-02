@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    public GameObject fencePrefabs;
-    private Vector3 spawnPos = new Vector3(25, 0, 0);
+    public GameObject[] obstaclesPrefabs;
+    private Vector3 spawnPos = new Vector3(25, 2, 0);
     private float startDelay = 2;
     private float repeatRate = 2;
     private PlayerMovement playerMoventScrip;
@@ -14,7 +14,7 @@ public class SpawnManager : MonoBehaviour
     void Start()
     {
         playerMoventScrip = GameObject.Find("Player1").GetComponent<PlayerMovement>();
-        InvokeRepeating("FenceSpawn", startDelay, repeatRate);
+        InvokeRepeating("ObstaclesSpawn", startDelay, repeatRate);
     }
 
     // Update is called once per frame
@@ -22,11 +22,14 @@ public class SpawnManager : MonoBehaviour
     {
         
     }
-    private void FenceSpawn()
+    private void ObstaclesSpawn()
     {
+        int obstacleIndex = Random.Range(0, obstaclesPrefabs.Length);
+        Vector3 rotation = new Vector3(0, 0, 0);
+
         if(playerMoventScrip.gameOver == false)
         {
-            Instantiate(fencePrefabs, spawnPos, fencePrefabs.transform.rotation);
+            Instantiate(obstaclesPrefabs[obstacleIndex], spawnPos, Quaternion.Euler(rotation));
         }
         
     }
